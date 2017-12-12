@@ -1,0 +1,20 @@
+{
+  "name": "daniel/toolbox",
+  "description": "my php toolbox",
+  "type": "library",
+  "license": "MPL",
+  "authors": [
+    {
+      "name": "daniel",
+      "email": "zhao0829wang@163.com"
+    }
+  ],
+  "require": {
+    "php": "^5.3.3 || ^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Loading\\": ""
+    }
+  }
+}
