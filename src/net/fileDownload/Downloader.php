@@ -737,7 +737,7 @@ class Downloader
 	{
 		if( !isset( $this->_extensions_mime_arr ) )
 
-			$this->_extensions_mime_arr = @include(__DIR__.'/extensions_mime.php');
+			$this->_extensions_mime_arr = @include(__DIR__ . '/extensions_mime.php');
 
 		
 		$extension = strtolower( $extension );
