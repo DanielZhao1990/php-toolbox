@@ -36,10 +36,10 @@ class DiffPlatformClassLoader
      * @param string $className
      * @return boolean
      */
-    public function loadByNamespace($className)
+    public static function loadByNamespace($className)
     {
         foreach (self::$_appInitPath as $classPrefix => $classDir) {
-            if (strpos($classPrefix, $className) === 0) {
+            if (strpos($className,$classPrefix) === 0) {
                 $class_file = self::tryToFindPath($className,$classDir);
                 if ($class_file !== false) {
                     require_once $class_file;
@@ -56,12 +56,12 @@ class DiffPlatformClassLoader
      * @param $ext
      * @return bool|string
      */
-    function tryToFindPath($className, $classDir)
+    static    function  tryToFindPath($className, $classDir)
     {
         // 相对路径
         $class_path = str_replace('\\', DIRECTORY_SEPARATOR, $className);
         $classInfoArr = explode(DIRECTORY_SEPARATOR, $class_path);
-        array_splice($classInfoArr, 1, 0, $classInfoArr[0] . "-" . self::getOperateSystemStr());
+        $classInfoArr[0]=$classInfoArr[0] . "-" . self::getOperateSystemStr();
         $class_path = implode(DIRECTORY_SEPARATOR, $classInfoArr);
         // 先尝试在应用目录寻找文件
         $class_file = $classDir . DIRECTORY_SEPARATOR . $class_path . self::$classExt;
@@ -96,6 +96,5 @@ class DiffPlatformClassLoader
         self::$_appInitPath[$classPrefix."\\"] = $classDir;
     }
 }
-
 
 
