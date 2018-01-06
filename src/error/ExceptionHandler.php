@@ -13,6 +13,7 @@ class ExceptionHandler
 {
    static public function renderException(\Exception $e)
     {
+        $data["message"] = $e->getMessage();
         $data["code"] = $e->getCode();
         $data["file"] = $e->getFile();
         $data["line"] = $e->getLine();
@@ -30,9 +31,10 @@ class ExceptionHandler
             $function = $trace[$i]['function'];
             $file = isset($trace[$i]['file']) ? $trace[$i]['file'] : 'n/a';
             $line = isset($trace[$i]['line']) ? $trace[$i]['line'] : 'n/a';
-            $traces[] = sprintf(' %s%s%s() at <info>%s:%s</info>', $class, $type, $function, $file, $line);
+            $traces[] = sprintf(' %s%s%s() at %s:%s ', $class, $type, $function, $file, $line);
         }
         $data["traces"] = $traces;
         return $data;
     }
+
 }
