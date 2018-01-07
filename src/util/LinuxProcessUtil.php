@@ -15,7 +15,7 @@ class LinuxProcessUtil
     {
         if (SystemUtil::isLinux())
         {
-            $exec ="sudo ps -aux|grep $name|grep -v grep|cut -c 9-15|sudo xargs kill -9";
+            $exec ="sudo ps -aux|grep '$name'|grep -v grep|cut -c 9-15|sudo xargs kill -9";
             exec($exec);
         }
        
