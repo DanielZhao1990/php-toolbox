@@ -1,4 +1,5 @@
 <?php
+
 namespace toolbox\util;
 
 use toolbox\format\FormatUtil;
@@ -16,72 +17,65 @@ class RuntimeCounter extends BaseCounter
     private $end;
     private $lastLogTime;
 
+    static $instances = [];
 
-    public static function instance($tag)
+    public static function instance($tag="RuntimeCounter", $logType = self::LOT_TYPE_CONSOLE)
     {
-        $runtime = new RuntimeCounter($tag);
-        return $runtime;
+        if (!isset(self::$instances[$tag])) {
+            self::$instances[$tag] = new RuntimeCounter($tag, $logType);
+        }
+        return self::$instances[$tag];
     }
 
-    public function __construct($tag)
+    public function __construct($tag, $logType)
     {
+        parent::__construct();
+        $this->logType = $logType;
         $this->tag = $tag;
     }
 
 
-    function start($mark=false)
+    /**
+     * 打印开始计时
+     * @description
+     * @author: daniel
+     */
+   public function start()
     {
         $this->start = self::microTime();
-        $this->lastLogTime =   $this->start;
-        if(!$mark){
-            self::printLog("--------------- 开始 $this->tag 计时 --------------- ");
-        }else{
-            self::printTestLog("--------------- 开始 $this->tag 计时 --------------- ");
-        }
+        $this->lastLogTime = $this->start;
+        $this->printLog("--------------- 开始 $this->tag 计时 --------------- ");
     }
 
-    function tag($tag)
-    {
-        $this->tag = $tag;
-    }
 
-<<<<<<< HEAD
-    function log($tag,$flag=false)
-=======
-    function log($tag,$mark=false)
->>>>>>> 7876a44dbf7799c19dbf229f3cf8fe816c33adb6
+    /**
+     * 记录日志
+     * @description
+     * @author: daniel
+     * @param $tag
+     * @return float
+     */
+    function log($tag)
     {
-        if($flag){
-            self::printTestLog($tag);
-        }
         $current = self::microTime();
         $time = $current - $this->lastLogTime;
-        if(!$mark){
-            self::printLog($tag . "操作耗时 " . ($time) . " 毫秒");
-        }else{
-            self::printTestLog($tag . "操作耗时 " . ($time) . " 毫秒");
-        }
+        $this->printLog($tag . "操作耗时 " . ($time) . " 毫秒");
         $this->lastLogTime = $current;
         return $time;
     }
 
-    function end($mark=false)
+    function end()
     {
         $this->end = self::microTime();
-        if(!$mark){
-            self::printLog($this->tag . " 操作总耗时 " . ($this->end - $this->start) . " 毫秒");
-            self::printLog("--------------- 结束 $this->tag 计时 --------------- ");
-        }else{
-            self::printTestLog($this->tag . " 操作总耗时 " . ($this->end - $this->start) . " 毫秒");
-            self::printTestLog("--------------- 结束 $this->tag 计时 --------------- ");
-        }
+        $this->printLog($this->tag . " 操作总耗时 " . ($this->end - $this->start) . " 毫秒");
+        $this->printLog("--------------- 结束 $this->tag 计时 --------------- ");
     }
 
 
     public static function microTime()
     {
         //返回当前的毫秒时间戳
-            list($msec, $sec) = explode(' ', microtime());
-            return (float)sprintf('%.0f', (floatval($msec) + floatval($sec)) * 1000);
+        list($msec, $sec) = explode(' ', microtime());
+        return (float)sprintf('%.0f', (floatval($msec) + floatval($sec)) * 1000);
     }
 }
