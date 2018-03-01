@@ -1,0 +1,1 @@
+使用时将tests目录复制到模块目录下,运行phpunit.xml即可
