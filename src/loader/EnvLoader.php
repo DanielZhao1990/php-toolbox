@@ -19,7 +19,7 @@ class EnvLoader
      * @param $env string 环境名,可以不传入，不传入时使用 APP_COMMAND_ENV 常量
      * @param string $initialConfig 最先初始化的公共配置的目录 ,默认为$envDir/initial_config.php
      */
-    public static function envLoad($envDir, $env = null, $initialConfig = "initial_config")
+    public static function envLoad($envDir, $env = null, $initialConfig = "common_config")
     {
         is_file($envDir . DIRECTORY_SEPARATOR . "/$initialConfig.php") && require_once $envDir . DIRECTORY_SEPARATOR . "/$initialConfig.php";
         $env = $env ? $env : APP_COMMAND_ENV;
