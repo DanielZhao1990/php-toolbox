@@ -6,8 +6,9 @@
  * Time: 17:21
  */
 
-namespace toolbox\cache;
+namespace toolbox\cache;;
 
+use think\Cache;
 
 abstract class BaseCache
 {
@@ -19,34 +20,35 @@ abstract class BaseCache
     /**
      * @var string 前缀
      */
-    protected $cacheKeySuffix="";
-    protected $cacheKeyPrefix="";
+    protected $cacheKeySuffix = "";
+    protected $cacheKeyPrefix = "";
 
     /**
      * @var bool 是否使用PHP静态变量缓存
      */
-    protected $usePHPCache=true;
+    protected $usePHPCache = true;
     /**
      * @var int 缓存时间
      */
-    protected $remain=3600;
+    protected $remain = 3600;
 
     /**
      * @var int 10分钟
      */
-    protected $phpCacheRefreshTime=600;
+    protected $phpCacheRefreshTime = 600;
 
-    protected $phpCacheTime=0;
+    protected $cacheConfigName = '';
     /**
      * php内存区，根据key->value进行存储.key=$cacheKey,value=实际值.
      * @var
      */
     static private $values;
+    static private $phpRefreshTimes;
 
-    function __construct($cacheKeySuffix=null)
+    function __construct($cacheKeySuffix = null)
     {
-        $this->cacheKey=str_replace('\\',"-",get_class($this));
-        $this->cacheKeySuffix=$cacheKeySuffix;
+        $this->cacheKey = str_replace('\\', "-", get_class($this));
+        $this->cacheKeySuffix = $cacheKeySuffix;
         $this->totalCacheKey = $this->getTotalCacheKey();
     }
 
@@ -56,9 +58,9 @@ abstract class BaseCache
      * @description
      * @author: daniel
      */
-    public  function sync()
+    public function sync()
     {
-        $data =$this->generateData();
+        $data = $this->generateData();
         $this->setValue($data);
     }
 
@@ -71,27 +73,24 @@ abstract class BaseCache
      */
     public function getCacheValue()
     {
-        $currentTime=time();
-        $value=false;
-        if ($this->usePHPCache)
-        {
+        $currentTime = time();
+        $value = false;
+        if ($this->usePHPCache) {
+            $cacheTime = isset(self::$phpRefreshTimes[$this->totalCacheKey])? self::$phpRefreshTimes[$this->totalCacheKey]:0;
             //PHP缓存有缓存时间，且缓存没有过期
-           if ($this->phpCacheTime&&$currentTime<$this->phpCacheTime+$this->phpCacheRefreshTime)
-           {
-               $value=isset(self::$values[$this->totalCacheKey])? self::$values[$this->totalCacheKey]:null;
-           }
+            if ($cacheTime && $currentTime < $cacheTime + $this->phpCacheRefreshTime) {
+                $value = isset(self::$values[$this->totalCacheKey]) ? self::$values[$this->totalCacheKey] : null;
+            }
         }
-        if($value!==false&&$value!==null)
-        {
+        if ($value !== false && $value !== null) {
             return $value;
-        }else{
-            $value = cache($this->getTotalCacheKey());
+        } else {
+            $value = $this->cache($this->totalCacheKey);
             if ($value) {
-                if ($this->usePHPCache)
-                {
-                    self::$values[$this->totalCacheKey]=$value;
+                if ($this->usePHPCache) {
+                    $this->updatePhpValue($value);
                 }
-            }else{
+            } else {
                 $value = $this->generateData();
                 $this->setValue($value);
             }
@@ -105,13 +104,18 @@ abstract class BaseCache
      */
     public function setValue($value)
     {
-        if ($this->usePHPCache)
-        {
-            self::$values[$this->totalCacheKey]=$value;
+        if ($this->usePHPCache) {
+            $this->updatePhpValue($value);
         }
-        cache($this->getTotalCacheKey(), $value,$this->remain);
+        $this->cache($this->getTotalCacheKey(), $value, $this->remain);
     }
 
+
+    public function updatePhpValue($value)
+    {
+        self::$values[$this->totalCacheKey] = $value;
+        self::$phpRefreshTimes[$this->totalCacheKey] = time();
+    }
 
     /**
      * 生成缓存数据
@@ -123,17 +127,26 @@ abstract class BaseCache
      * 返回缓存的key值
      * @return mixed
      */
-    public function getTotalCacheKey(){
-        $key=$this->cacheKey;
-        if ($this->cacheKeyPrefix)
-        {
-            $key=$this->cacheKeyPrefix.$key;
+    public function getTotalCacheKey()
+    {
+        $key = $this->cacheKey;
+        if ($this->cacheKeyPrefix) {
+            $key = $this->cacheKeyPrefix . "_" . $key;
         }
-        if ($this->cacheKeySuffix)
-        {
-            $key=$key.$this->cacheKeySuffix;
+        if ($this->cacheKeySuffix) {
+            $key = $key . "_" . $this->cacheKeySuffix;
         }
         return $key;
+    }
+
+
+    public function cache($name, $value = '', $options = null, $tag = null)
+    {
+        if ($value !== '') {
+            Cache::store($this->cacheConfigName)->set($name, $value);
+        } else {
+            return Cache::store($this->cacheConfigName)->get($name);
+        }
     }
 
 }
