@@ -10,9 +10,7 @@
 // +----------------------------------------------------------------------
 namespace tests;
 
-use app\paipaidai\model\LoanList;
-use app\paipaidai\model\UserClient;
-use toolbox\tests\BaseTestCase;
+use toolbox\test\BaseTestCase;
 
 class ExampleTest extends BaseTestCase
 {

@@ -19,13 +19,15 @@ class TestLoader
      * @author: daniel
      * @param $moduleDir
      */
-    public static function tp5ModuleLoader($moduleDir)
+    public static function tp5ModuleLoader($moduleDir,$env=false)
     {
         define('APP_PATH', realpath($moduleDir . '/../'));
         require APP_PATH."/../thinkphp/base.php";
         App::initCommon();
-        $env="local";
-        EnvLoader::envLoad($moduleDir . "/env",$env);
+        if ($env) //传入环境则加载
+        {
+            EnvLoader::envLoad($moduleDir . "/env",$env);
+        }
         is_file($moduleDir . "/config.php") && \think\Config::load($moduleDir . "/config.php");
         is_file($moduleDir . "/common.php") && require_once $moduleDir . "/common.php";
     }
