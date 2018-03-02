@@ -1,4 +1,5 @@
 <?php
+
 namespace toolbox\util;
 
 function test()
@@ -150,24 +151,32 @@ class MailSender
     /**
      * 设置收件人，多个收件人，调用多次.
      * @access public
-     * @param string $to 收件人地址
+     * @param string|array $to 收件人地址
      * @return boolean
      */
     public function setReceiver($to)
     {
-        $this->_to[] = $to;
+        if (is_array($to)) {
+            $this->_to = array_merge($this->_to, $to);
+        } else {
+            $this->_to[] = $to;
+        }
         return true;
     }
 
     /**
      * 设置抄送，多个抄送，调用多次.
      * @access public
-     * @param string $cc 抄送地址
+     * @param string|array $cc 抄送地址
      * @return boolean
      */
     public function setCc($cc)
     {
-        $this->_cc[] = $cc;
+        if (is_array($cc)) {
+            $this->_cc = array_merge($this->_cc, $cc);
+        } else {
+            $this->_cc[] = $cc;
+        }
         return true;
     }
 
@@ -391,7 +400,7 @@ class MailSender
      */
     protected function sendCommand($command, $code)
     {
-        $this->debugEcho( 'Send command:' . $command . ',expected code:' . $code . '<br />');
+        $this->debugEcho('Send command:' . $command . ',expected code:' . $code . '<br />');
         //发送命令给服务器
         try {
             if (socket_write($this->_socket, $command, strlen($command))) {
@@ -403,7 +412,7 @@ class MailSender
 
                 //读取服务器返回
                 $data = trim(socket_read($this->_socket, 1024));
-                $this->debugEcho( 'response:' . $data . '<br /><br />');
+                $this->debugEcho('response:' . $data . '<br /><br />');
 
                 if ($data) {
                     $pattern = "/^" . $code . "+?/";
@@ -435,7 +444,7 @@ class MailSender
      */
     protected function sendCommandSecurity($command, $code)
     {
-        $this->debugEcho( 'Send command:' . $command . ',expected code:' . $code . '<br />');
+        $this->debugEcho('Send command:' . $command . ',expected code:' . $code . '<br />');
         try {
             if (fwrite($this->_socket, $command)) {
                 //当邮件内容分多次发送时，没有$code，服务器没有返回
@@ -444,7 +453,7 @@ class MailSender
                 }
                 //读取服务器返回
                 $data = trim(fread($this->_socket, 1024));
-                $this->debugEcho( 'response:' . $data . '<br /><br />');
+                $this->debugEcho('response:' . $data . '<br /><br />');
 
                 if ($data) {
                     $pattern = "/^" . $code . "+?/";
