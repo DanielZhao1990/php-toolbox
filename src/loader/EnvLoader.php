@@ -11,6 +11,70 @@ namespace toolbox\loader;
 
 class EnvLoader
 {
+
+    /**
+     * @var array
+     */
+    public static $defaultEnvMap=[
+        "local"=>[
+            "localhost",
+            "127.0.0.1",
+            //匹配 192.168.0.* ip段
+            "/^192\.168\.0\..*/",
+        ],
+        "dev"=>[
+            "test.51zsqc.com",
+            "ceshi.51zsqc.com",
+            //匹配 192.168.90.* ip段
+            "/^192\.168\.90\..*/",
+            // 匹配任意51zsqc.com的二级域名
+            "/^(\w+)\.51zsqc\.com/"
+        ],
+        "product"=>[
+            // 匹配51zsqc.com
+            "51zsqc.com",
+            "192.168.90.22",
+            "192.168.90.24",
+        ]
+    ];
+
+
+
+
+
+    /**
+     * @description
+     * @author: daniel
+     * @param $maps array 请参照 EnvLoader::$demoMap
+     */
+    public static function getEnvByHost($maps,$defaultEnv="local")
+    {
+        $curHost=$_SERVER["HTTP_HOST"];
+        foreach ($maps as $env=>$hosts) {
+            foreach ($hosts as $host) {
+                if (strpos($host,"/")!==0)// 不是正则，直接比较
+                {
+                    if ($curHost===$host)
+                    {
+                       return $env;
+                    }
+                }
+            }
+        }
+        foreach ($maps as $env=>$hosts) {
+            foreach ($hosts as $host) {
+                if (strpos($host,"/")===0)//如果是正则表达式，使用正则匹配
+                {
+                   if (preg_match($host, $curHost))
+                   {
+                       return $env;
+                   }
+                }
+            }
+        }
+        return $defaultEnv;
+    }
+
     /**
      * @title envLoad
      * @description

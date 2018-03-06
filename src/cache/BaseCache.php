@@ -107,7 +107,7 @@ abstract class BaseCache
         if ($this->usePHPCache) {
             $this->updatePhpValue($value);
         }
-        $this->cache($this->getTotalCacheKey(), $value, $this->remain);
+        $this->cache($this->getTotalCacheKey(), $value);
     }
 
 
@@ -143,7 +143,7 @@ abstract class BaseCache
     public function cache($name, $value = '', $options = null, $tag = null)
     {
         if ($value !== '') {
-            Cache::store($this->cacheConfigName)->set($name, $value);
+            Cache::store($this->cacheConfigName)->set($name, $value,$this->remain);
         } else {
             return Cache::store($this->cacheConfigName)->get($name);
         }
