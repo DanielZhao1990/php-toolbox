@@ -24,4 +24,16 @@ class UrlHelper
                 return true;
         }
     }
+
+    /**
+     * 返回当前请求的Url
+     * @description
+     * @author: daniel
+     * @return string
+     */
+    public static function currentUrl()
+    {
+        $port = $_SERVER["SERVER_PORT"] == "80" ? "" : ":".$_SERVER["SERVER_PORT"];
+        return $_SERVER["REQUEST_SCHEME"]."://" .$_SERVER["HTTP_HOST"]."$port".$_SERVER["REQUEST_URI"];
+    }
 }

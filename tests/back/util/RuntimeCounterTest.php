@@ -10,19 +10,20 @@
 // +----------------------------------------------------------------------
 namespace tests;
 
-class ExampleTest extends \PHPUnit\Framework\TestCase
+use toolbox\util\RuntimeCounter;
+
+class RuntimeCounterTest extends \PHPUnit\Framework\TestCase
 {
     public function testBasicExample()
     {
-        $this->assertEquals("a","a");
+        RuntimeCounter::instance()->start();
+        sleep(1);
+        RuntimeCounter::instance()->log("测试1");
+        sleep(0.5);
+        RuntimeCounter::instance()->log("测试2");
+        RuntimeCounter::instance()->end();
     }
-    public function testBasicExample1()
-    {
-        $this->assertEquals("a","a");
-    }
-    public function testBasicExample2()
-    {
-        $this->assertEquals("a","a");
-    }
+
+
 
 }
