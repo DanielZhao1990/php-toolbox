@@ -25,6 +25,50 @@ class UrlHelper
         }
     }
 
+
+    public static function vueUrl()
+    {
+
+    }
+
+    /**
+     *  URL base64编码
+     * '+' -> '-'
+     * '/' -> '_'
+     * '=' -> ''
+     * @description
+     * @author: daniel
+     * @param $string
+     * @return mixed|string
+     */
+    static function urlsafe_b64encode($string)
+    {
+        $data = base64_encode($string);
+        $data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
+        return $data;
+    }
+
+    /**
+     *
+     * URL base64解码
+     * '-' -> '+'
+     * '_' -> '/'
+     * 字符串长度%4的余数，补'='
+     * @description
+     * @author: daniel
+     * @param $string
+     * @return bool|string
+     */
+    static function urlsafe_b64decode($string)
+    {
+        $data = str_replace(array('-', '_'), array('+', '/'), $string);
+        $mod4 = strlen($data) % 4;
+        if ($mod4) {
+            $data .= substr('====', $mod4);
+        }
+        return base64_decode($data);
+    }
+
     /**
      * 返回当前请求的Url
      * @description
@@ -33,7 +77,7 @@ class UrlHelper
      */
     public static function currentUrl()
     {
-        $port = $_SERVER["SERVER_PORT"] == "80" ? "" : ":".$_SERVER["SERVER_PORT"];
-        return $_SERVER["REQUEST_SCHEME"]."://" .$_SERVER["HTTP_HOST"]."$port".$_SERVER["REQUEST_URI"];
+        $port = $_SERVER["SERVER_PORT"] == "80" ? "" : ":" . $_SERVER["SERVER_PORT"];
+        return $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "$port" . $_SERVER["REQUEST_URI"];
     }
 }
