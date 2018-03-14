@@ -77,4 +77,18 @@ class FileHelper
         return $files;
     }
 
+
+    static function file_exists($filePath){
+        //判断环境
+            $encode = SimpleEncoder::mb_detect_encoding($filePath);
+            if ($encode == "UTF-8") {
+                $filePath = iconv("UTF-8", "GB2312", $filePath);
+            }
+        if(file_exists($filePath)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
