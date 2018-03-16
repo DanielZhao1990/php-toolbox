@@ -49,6 +49,10 @@ class EnvLoader
      */
     public static function getEnvByHost($maps,$defaultEnv="local")
     {
+        if (empty($_SERVER["HTTP_HOST"]))
+        {
+            return $defaultEnv;
+        }
         $curHost=$_SERVER["HTTP_HOST"];
         foreach ($maps as $env=>$hosts) {
             foreach ($hosts as $host) {
