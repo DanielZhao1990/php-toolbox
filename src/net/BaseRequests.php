@@ -64,6 +64,8 @@ class BaseRequests
     public function set_timeout($timeout)
     {
         $this->timeout = $timeout;
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->timeout);
     }
 
     /**
