@@ -47,9 +47,14 @@ abstract class BaseEnvCommand extends Command
         define("COMMAND_LOG_LEVEL", $logLevel);
         // 尝试读取当前子项目的配置、函数以及环境
         EnvLoader::envLoad($dirName . "/../env");
+        // 默认加载全局环境，可以手动在子环境中禁用全局环境加载
+        if (!defined("LOAD_APP_END")|| LOAD_APP_END !== false) {
+            echo "开始加载全局环境 $env\n";
+            EnvLoader::envLoad(APP_PATH . "/../env");
+        }
         is_file($dirName . "/../config.php") && \think\Config::load($dirName . "/../config.php");
         is_file($dirName . "/../common.php") && require_once $dirName . "/../common.php";
-        echo "程序运行模式为 $env\n";
+        echo "程序运行环境为 $env\n";
     }
 
     protected function execute(Input $input, Output $output)
@@ -61,10 +66,10 @@ abstract class BaseEnvCommand extends Command
      * command主执行入口，你应该把运行代码写到这里
      * @title executeCommand
      * @description
-     * @author: daniel
      * @param Input $input
      * @param Output $output
      * @return mixed
+     * @author: daniel
      */
     public abstract function executeCommand(Input $input, Output $output);
 
@@ -72,8 +77,8 @@ abstract class BaseEnvCommand extends Command
      * 初始化command运行名
      * @title getCommandName
      * @description
-     * @author: daniel
      * @return mixed
+     * @author: daniel
      */
     public abstract function getCommandName();
 
@@ -81,8 +86,8 @@ abstract class BaseEnvCommand extends Command
      * 返回当前command的描述
      * @title getCommandDescription
      * @description
-     * @author: daniel
      * @return mixed
+     * @author: daniel
      */
     public abstract function getCommandDescription();
 
